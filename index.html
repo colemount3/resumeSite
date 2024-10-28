@@ -1,191 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Super Cool Awesome Website!</title>
-    <style>
-        body {
-            background-image: url('https://staging.cohostcdn.org/attachment/e404011b-fdda-49d2-b70b-1361fb1b731c/dougbeekman.jpg'); /* Add your background image URL here */
-            background-size: cover;
-            font-family: 'Comic Sans MS', sans-serif;
-            text-align: center;
-            color: lime;
-            animation: rainbowText 5s infinite;
-        }
-        
-        h1, h2 {
-            font-size: 50px;
-            text-shadow: 2px 2px magenta;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cole Mount's Portfolio</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-image: url('https://www.iicybersecurity.com/ethajaph/2020/04/satellite-hacking.jpg');
+      background-size: cover;
+      color: white;
+      text-align: center;
+      overflow: hidden;
+    }
 
-        @keyframes rainbowText {
-            0% { color: red; }
-            20% { color: orange; }
-            40% { color: yellow; }
-            60% { color: green; }
-            80% { color: blue; }
-            100% { color: violet; }
-        }
+    h1, h2, h3 {
+      margin: 10px 0;
+    }
 
-        .container {
-            padding: 20px;
-            border: 10px solid gold;
-            background: rgba(255, 255, 0, 0.7);
-            margin: 20px auto;
-            width: 80%;
-        }
+    #fun-fact {
+      margin: 20px 0;
+      font-size: 1.5em;
+    }
 
-        .game-section {
-            margin: 40px auto;
-        }
+    #snake-container, #doom-container {
+      display: inline-block;
+      margin: 20px;
+    }
 
-        .leaderboard {
-            border: 5px solid black;
-            background-color: pink;
-            padding: 10px;
-            margin-top: 20px;
-        }
+    #leaderboard {
+      margin-top: 20px;
+    }
 
-        .fun-facts {
-            font-size: 30px;
-            margin: 30px auto;
-            padding: 20px;
-            border: 5px dotted green;
-            background-color: lightyellow;
-        }
-    </style>
+    canvas {
+      border: 2px solid white;
+    }
+  </style>
 </head>
 <body>
-    <h1>Welcome to My Super Awesome Website!</h1>
-    <h2>The Craziest and Funkiest Resume!</h2>
-    
-    <div class="container">
-        <h2>My Professional Skills (Vastly Overstated!)</h2>
-        <p>I am an unparalleled expert in everything. With my limitless knowledge and skills that exceed the boundaries of the known universe, I dominate every field I touch. From advanced quantum physics to intergalactic negotiations, my capabilities are unmatched!</p>
-        <p>Also, I can create websites that are *really* cool and super tacky. Trust me, I'm the best.</p>
-        <a href="#snakeGame">Play Snake Game</a> | <a href="#doomGame">Play DOOM</a>
-    </div>
+  <h1>Cole Mount's Portfolio: Way More Than a Resume</h1>
+  <h2>Software Engineer • Satellite Hacker • Cybersecurity Ninja</h2>
 
-    <div class="fun-facts">
-        <h2>Fun Facts!</h2>
-        <ul id="funFactsList"></ul>
-    </div>
+  <div id="fun-fact">Loading a fun fact...</div>
 
-    <div id="snakeGame" class="game-section">
-        <h2>Snake Game</h2>
-        <canvas id="snakeCanvas" width="400" height="400" style="border:1px solid black;"></canvas>
-        <p>Use WASD or arrow keys to move. Press Space to start or replay!</p>
-        <div class="leaderboard" id="snakeLeaderboard">
-            <h3>Snake Game Leaderboard</h3>
-            <ol id="snakeHighscores"></ol>
-        </div>
-    </div>
+  <div id="snake-container">
+    <h3>Snake Game</h3>
+    <canvas id="snake-game" width="400" height="400"></canvas>
+    <div id="leaderboard"></div>
+  </div>
 
-    <div id="doomGame" class="game-section">
-        <h2>DOOM Game</h2>
-        <div id="dosbox" class="dosbox-container"></div>
-        <br/>
-        <button onclick="dosbox.requestFullScreen();">Make fullscreen</button>
-        <div class="leaderboard" id="doomLeaderboard">
-            <h3>DOOM Game Leaderboard</h3>
-            <ol id="doomHighscores"></ol>
-        </div>
-    </div>
+  <div id="doom-container">
+    <h3>Play DOOM</h3>
+    <iframe src="https://github.com/cnlohr/embeddedDOOM" width="600" height="400"></iframe>
+  </div>
 
-    <script type="text/javascript" src="https://js-dos.com/cdn/js-dos-api.js"></script>
-    <script type="text/javascript">
-        var dosbox = new Dosbox({
-          id: "dosbox",
-          onload: function (dosbox) {
-            dosbox.run("upload/DOOM-@evilution.zip", "./doom");
-          },
-          onrun: function (dosbox, app) {
-            console.log("App '" + app + "' is runned");
-          }
-        });
-    </script>
+  <script>
+    // Fetch Fun Facts from Public API
+    async function loadFunFact() {
+      try {
+        const response = await fetch('https://uselessfacts.jsph.pl/random.json?language=en');
+        const data = await response.json();
+        document.getElementById('fun-fact').innerText = "Fun Fact: " + data.text;
+      } catch (error) {
+        document.getElementById('fun-fact').innerText = "Couldn't load a fun fact, but you're amazing!";
+      }
+    }
+    setInterval(loadFunFact, 10000); // Refresh every 10 seconds
+    loadFunFact();
 
-    <script>
-        // Snake Game Logic
-        let canvas = document.getElementById("snakeCanvas");
-        let ctx = canvas.getContext("2d");
-        let snake = [{ x: 10, y: 10 }];
-        let direction = { x: 0, y: 0 };
-        let apple = { x: Math.floor(Math.random() * 20), y: Math.floor(Math.random() * 20) };
-        let score = 0;
-        let gameInterval;
+    // SNAKE GAME
+    const canvas = document.getElementById('snake-game');
+    const ctx = canvas.getContext('2d');
+    let snake = [{ x: 10, y: 10 }];
+    let direction = { x: 0, y: 0 };
+    let food = { x: 15, y: 15 };
+    let gameInterval;
+    let score = 0;
+    const leaderboard = [];
 
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "green";
-            snake.forEach(segment => {
-                ctx.fillRect(segment.x * 20, segment.y * 20, 20, 20);
-            });
-            ctx.fillStyle = "red";
-            ctx.fillRect(apple.x * 20, apple.y * 20, 20, 20);
-        }
+    function startGame() {
+      snake = [{ x: 10, y: 10 }];
+      direction = { x: 0, y: 0 };
+      score = 0;
+      placeFood();
+      clearInterval(gameInterval);
+      gameInterval = setInterval(gameLoop, 100);
+    }
 
-        function update() {
-            let head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
-            snake.unshift(head);
+    function gameLoop() {
+      const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
+      snake.unshift(head);
 
-            if (head.x === apple.x && head.y === apple.y) {
-                score++;
-                apple = { x: Math.floor(Math.random() * 20), y: Math.floor(Math.random() * 20) };
-            } else {
-                snake.pop();
-            }
+      if (head.x === food.x && head.y === food.y) {
+        score++;
+        placeFood();
+      } else {
+        snake.pop();
+      }
 
-            if (head.x < 0 || head.x >= 20 || head.y < 0 || head.y >= 20 || snake.slice(1).some(segment => segment.x === head.x && segment.y === head.y)) {
-                clearInterval(gameInterval);
-                alert(`Game Over! Your score: ${score}`);
-                // Leaderboard logic can be added here
-            }
-        }
+      if (isCollision(head)) {
+        clearInterval(gameInterval);
+        if (checkLeaderboard(score)) askForName();
+      }
 
-        function gameLoop() {
-            update();
-            draw();
-        }
+      drawGame();
+    }
 
-        document.addEventListener("keydown", (event) => {
-            if (event.key === "ArrowUp" || event.key === "w") direction = { x: 0, y: -1 };
-            if (event.key === "ArrowDown" || event.key === "s") direction = { x: 0, y: 1 };
-            if (event.key === "ArrowLeft" || event.key === "a") direction = { x: -1, y: 0 };
-            if (event.key === "ArrowRight" || event.key === "d") direction = { x: 1, y: 0 };
-            if (event.key === " ") {
-                clearInterval(gameInterval);
-                score = 0;
-                snake = [{ x: 10, y: 10 }];
-                direction = { x: 0, y: 0 };
-                gameInterval = setInterval(gameLoop, 100);
-            }
-        });
+    function placeFood() {
+      food.x = Math.floor(Math.random() * 20);
+      food.y = Math.floor(Math.random() * 20);
+    }
 
-        // Fun Facts Logic: Fetch from an API
-        async function fetchFunFacts() {
-            try {
-                const response = await fetch('https://randomuselessfact.appspot.com/random.json?language=en'); // Random useless facts API
-                const fact = await response.json();
-                displayFunFact(fact.text);
-            } catch (error) {
-                console.error('Error fetching fun facts:', error);
-            }
-        }
+    function isCollision(head) {
+      return (
+        head.x < 0 || head.x >= 20 || head.y < 0 || head.y >= 20 ||
+        snake.slice(1).some(segment => segment.x === head.x && segment.y === head.y)
+      );
+    }
 
-        function displayFunFact(fact) {
-            const factList = document.getElementById('funFactsList');
-            const listItem = document.createElement('li');
-            listItem.textContent = fact;
-            factList.appendChild(listItem);
-        }
+    function drawGame() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      snake.forEach(segment => drawSegment(segment, 'lime'));
+      drawSegment(food, 'red');
+    }
 
-        // Fetch and display a random fact when the page loads
-        window.onload = function() {
-            fetchFunFacts();
-            gameInterval = setInterval(gameLoop, 100);
-        };
-    </script>
+    function drawSegment(segment, color) {
+      ctx.fillStyle = color;
+      ctx.fillRect(segment.x * 20, segment.y * 20, 20, 20);
+    }
+
+    function checkLeaderboard(score) {
+      return leaderboard.length < 10 || score > leaderboard[9].score;
+    }
+
+    function askForName() {
+      const name = prompt('You made the leaderboard! Enter your name:');
+      if (name) {
+        leaderboard.push({ name, score });
+        leaderboard.sort((a, b) => b.score - a.score);
+        if (leaderboard.length > 10) leaderboard.pop();
+        updateLeaderboard();
+      }
+    }
+
+    function updateLeaderboard() {
+      const leaderboardDiv = document.getElementById('leaderboard');
+      leaderboardDiv.innerHTML = '<h3>Leaderboard</h3>' + leaderboard
+        .map((entry, index) => `${index + 1}. ${entry.name} - ${entry.score}`)
+        .join('<br>');
+    }
+
+    window.addEventListener('keydown', e => {
+      switch (e.key) {
+        case 'ArrowUp': case 'w': direction = { x: 0, y: -1 }; e.preventDefault(); break;
+        case 'ArrowDown': case 's': direction = { x: 0, y: 1 }; e.preventDefault(); break;
+        case 'ArrowLeft': case 'a': direction = { x: -1, y: 0 }; e.preventDefault(); break;
+        case 'ArrowRight': case 'd': direction = { x: 1, y: 0 }; e.preventDefault(); break;
+        case ' ': startGame(); break;
+      }
+    });
+  </script>
 </body>
 </html>
