@@ -3,189 +3,112 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cole Mount's Portfolio of Awesomeness</title>
+  <title>Cole Mount - Master of the Universe</title>
   <style>
     body {
       margin: 0;
       padding: 0;
-      font-family: Arial, sans-serif;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
       background-image: url('https://staging.cohostcdn.org/attachment/e404011b-fdda-49d2-b70b-1361fb1b731c/dougbeekman.jpg');
       background-size: cover;
-      color: white;
-      text-align: center;
+      color: yellow;
+      text-shadow: 2px 2px 8px black;
       overflow: hidden;
     }
 
-    h1, h2, h3 {
-      margin: 10px 0;
+    h1 {
+      margin-top: 50px;
+      font-size: 5em;
+      text-transform: uppercase;
+      text-align: center;
+      animation: glow 1.5s infinite alternate;
+    }
+
+    h2 {
+      font-size: 2.5em;
+      text-align: center;
+      margin-top: -20px;
+    }
+
+    p {
+      font-size: 1.5em;
+      margin: 20px;
+      max-width: 80%;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     #fun-fact {
-      margin: 20px 0;
-      font-size: 1.5em;
+      margin: 30px auto;
+      font-size: 2em;
+      max-width: 60%;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
     }
 
-    #snake-container, #doom-container {
-      display: inline-block;
-      margin: 20px;
+    footer {
+      position: absolute;
+      bottom: 20px;
+      width: 100%;
+      text-align: center;
+      font-size: 1.2em;
     }
 
-    #leaderboard {
-      margin-top: 20px;
-      color: yellow;
-    }
-
-    #snake-game {
-      background-color: rgba(0, 0, 0, 0.7);
-    }
-
-    canvas {
-      border: 2px solid white;
+    @keyframes glow {
+      from { text-shadow: 0 0 10px black; }
+      to { text-shadow: 0 0 20px yellow; }
     }
   </style>
 </head>
 <body>
-  <h1>Cole Mount's Portfolio: The Most Impressive Page on the Internet</h1>
-  <h2>Electrical Engineer • Software Genius • Future Olympic Athlete • Gym Rat Extraordinaire</h2>
+  <h1>Cole Mount: Legend in the Making </h1>
+  <h2>Engineer, Olympian, Time Traveler, Deity</h2>
 
-  <div id="fun-fact">Loading a fun fact...</div>
+  <p>
+    I don’t just build circuits—I whisper to electrons and command them to obey. As an electrical engineer, my designs are so efficient that 
+    rumors suggest they violate the laws of physics. NASA once tried to recruit me to rewrite gravity, but I was busy building my AI-driven 
+    toaster that also predicts stock market trends.
+  </p>
 
-  <div id="snake-container">
-    <h3>Snake Game</h3>
-    <canvas id="snake-game" width="400" height="400"></canvas>
-    <p id="snake-instructions">Press space to start</p>
-    <div id="leaderboard"></div>
-  </div>
+  <p>
+    In the software world, I’m practically a demigod. I’ve coded apps that can write their own poetry, created encryption algorithms so 
+    secure they make quantum computers cry, and debugged code faster than a speeding bullet. My presence at DEFCON was so inspiring that 
+    half the hackers retired, claiming, “There’s nothing left to hack after Cole.”
+  </p>
 
-  <div id="doom-container">
-    <h3>Play DOOM</h3>
-    <iframe 
-      id="doom-frame" 
-      src="https://cdn.doom.js.org" 
-      width="640" 
-      height="480" 
-      style="border: 2px solid white;"
-      allowfullscreen>
-    </iframe>
-    <div id="doom-leaderboard"></div>
-  </div>
+  <p>
+    Outside of engineering, I’m prepping for the 2028 Olympics, where I’ll not only win gold in rowing but also break records in events I 
+    don’t even compete in. I’ve already been approached by multiple countries to captain their national teams, but I humbly declined—I only 
+    row for glory and the thrill of domination. 
+  </p>
+
+  <p>
+    When I'm not bending reality with my projects or training to shatter world records, I enjoy relaxing by solving unsolvable math problems, 
+    deadlifting the weight of a small moon, and casually inventing new elements for the periodic table. Some say I’m a genius. Others say I’m 
+    a force of nature. I say: Why not both?
+  </p>
+
+  <div id="fun-fact">Loading an incredible fun fact...</div>
+
+  <footer>&copy; 2024 Cole Mount | Living Proof that Legends Are Real</footer>
 
   <script>
-    // Prevent page scrolling when playing DOOM inside the iframe.
-    const doomFrame = document.getElementById('doom-frame');
-    doomFrame.contentWindow?.addEventListener('keydown', preventScroll);
-
-    function preventScroll(e) {
-      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
-        e.preventDefault();
-      }
-    }
-
-    // Fetch Fun Facts from a Public API
+    // Dynamically load fun facts
     async function loadFunFact() {
       try {
         const response = await fetch('https://uselessfacts.jsph.pl/random.json?language=en');
         const data = await response.json();
         document.getElementById('fun-fact').innerText = "Fun Fact: " + data.text;
-      } catch {
-        document.getElementById('fun-fact').innerText = "Couldn't load a fun fact, but you're still awesome!";
+      } catch (error) {
+        document.getElementById('fun-fact').innerText = 
+          "Fun Fact: The concept of greatness was invented the moment I was born.";
       }
     }
-    setInterval(loadFunFact, 10000);
+
+    setInterval(loadFunFact, 10000); // Update every 10 seconds
     loadFunFact();
-
-    // Snake Game Code
-    const canvas = document.getElementById('snake-game');
-    const ctx = canvas.getContext('2d');
-    let snake = [{ x: 10, y: 10 }];
-    let direction = { x: 0, y: 0 };
-    let food = { x: 15, y: 15 };
-    let gameInterval;
-    let score = 0;
-    const leaderboard = [];
-
-    function startGame() {
-      snake = [{ x: 10, y: 10 }];
-      direction = { x: 0, y: 0 };
-      score = 0;
-      document.getElementById('snake-instructions').style.display = 'none';
-      placeFood();
-      clearInterval(gameInterval);
-      gameInterval = setInterval(gameLoop, 100);
-    }
-
-    function gameLoop() {
-      const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
-      snake.unshift(head);
-
-      if (head.x === food.x && head.y === food.y) {
-        score++;
-        placeFood();
-      } else {
-        snake.pop();
-      }
-
-      if (isCollision(head)) {
-        clearInterval(gameInterval);
-        if (checkLeaderboard(score)) askForName('snake');
-      }
-
-      drawGame();
-    }
-
-    function placeFood() {
-      food.x = Math.floor(Math.random() * 20);
-      food.y = Math.floor(Math.random() * 20);
-    }
-
-    function isCollision(head) {
-      return (
-        head.x < 0 || head.x >= 20 || head.y < 0 || head.y >= 20 ||
-        snake.slice(1).some(segment => segment.x === head.x && segment.y === head.y)
-      );
-    }
-
-    function drawGame() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      snake.forEach(segment => drawSegment(segment, 'lime'));
-      drawSegment(food, 'red');
-    }
-
-    function drawSegment(segment, color) {
-      ctx.fillStyle = color;
-      ctx.fillRect(segment.x * 20, segment.y * 20, 20, 20);
-    }
-
-    function checkLeaderboard(score) {
-      return leaderboard.length < 10 || score > leaderboard[9].score;
-    }
-
-    function askForName(game) {
-      const name = prompt(`You made the ${game} leaderboard! Enter your name:`);
-      if (name) {
-        leaderboard.push({ name, score });
-        leaderboard.sort((a, b) => b.score - a.score);
-        if (leaderboard.length > 10) leaderboard.pop();
-        updateLeaderboard();
-      }
-    }
-
-    function updateLeaderboard() {
-      const leaderboardDiv = document.getElementById('leaderboard');
-      leaderboardDiv.innerHTML = '<h3>Leaderboard</h3>' + leaderboard
-        .map((entry, index) => `${index + 1}. ${entry.name} - ${entry.score}`)
-        .join('<br>');
-    }
-
-    window.addEventListener('keydown', e => {
-      switch (e.key) {
-        case 'ArrowUp': case 'w': direction = { x: 0, y: -1 }; e.preventDefault(); break;
-        case 'ArrowDown': case 's': direction = { x: 0, y: 1 }; e.preventDefault(); break;
-        case 'ArrowLeft': case 'a': direction = { x: -1, y: 0 }; e.preventDefault(); break;
-        case 'ArrowRight': case 'd': direction = { x: 1, y: 0 }; e.preventDefault(); break;
-        case ' ': startGame(); break;
-      }
-    });
   </script>
 </body>
 </html>
