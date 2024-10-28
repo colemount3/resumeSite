@@ -58,6 +58,12 @@
         .button:hover {
             background-color: #00ffcc;
         }
+        #gameCanvas {
+            display: none;
+            margin: 20px auto;
+            background-color: black;
+            border: 5px solid #fff;
+        }
     </style>
 </head>
 <body>
@@ -84,9 +90,93 @@
         and web development!<br>
         🔧 Hands-on experience with <span class="highlight">Raspberry Pi</span> and <span class="highlight">MATLAB</span>!
     </p>
-    <button class="button" onclick="alert('Thanks for visiting!')">Contact Me!</button>
+    <button class="button" onclick="toggleGame()">Play Snake!</button>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
     <div class="footer">
         🌈 You're totally awesome for checking out my resume! 🌈
     </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const gridSize = 20;
+        let snake = [{ x: 160, y: 160 }];
+        let dx = gridSize;
+        let dy = 0;
+        let food = spawnFood();
+        let score = 0;
+
+        function toggleGame() {
+            canvas.style.display = canvas.style.display === 'none' ? 'block' : 'none';
+            if (canvas.style.display === 'block') startGame();
+        }
+
+        function startGame() {
+            document.addEventListener('keydown', changeDirection);
+            setInterval(updateGame, 100);
+        }
+
+        function updateGame() {
+            const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+            snake.unshift(head);
+
+            if (head.x === food.x && head.y === food.y) {
+                score++;
+                food = spawnFood();
+            } else {
+                snake.pop();
+            }
+
+            if (checkCollision(head)) {
+                alert('Game over! Your score: ' + score);
+                resetGame();
+            }
+
+            draw();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'red';
+            ctx.fillRect(food.x, food.y, gridSize, gridSize);
+
+            ctx.fillStyle = 'lime';
+            snake.forEach(part => ctx.fillRect(part.x, part.y, gridSize, gridSize));
+        }
+
+        function spawnFood() {
+            return {
+                x: Math.floor(Math.random() * (canvas.width / gridSize)) * gridSize,
+                y: Math.floor(Math.random() * (canvas.height / gridSize)) * gridSize
+            };
+        }
+
+        function changeDirection(event) {
+            const key = event.key;
+            if (key === 'ArrowUp' && dy === 0) {
+                dx = 0; dy = -gridSize;
+            } else if (key === 'ArrowDown' && dy === 0) {
+                dx = 0; dy = gridSize;
+            } else if (key === 'ArrowLeft' && dx === 0) {
+                dx = -gridSize; dy = 0;
+            } else if (key === 'ArrowRight' && dx === 0) {
+                dx = gridSize; dy = 0;
+            }
+        }
+
+        function checkCollision(head) {
+            return head.x < 0 || head.y < 0 || 
+                   head.x >= canvas.width || head.y >= canvas.height || 
+                   snake.slice(1).some(part => part.x === head.x && part.y === head.y);
+        }
+
+        function resetGame() {
+            snake = [{ x: 160, y: 160 }];
+            dx = gridSize;
+            dy = 0;
+            score = 0;
+            food = spawnFood();
+        }
+    </script>
 </body>
 </html>
