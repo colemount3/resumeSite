@@ -147,13 +147,17 @@
         }
 
         function gameOver() {
-            const playerName = prompt('Game over! Your score: ' + score + '. Enter your name:');
-            if (playerName) {
-                leaderboard.push({ name: playerName, score });
-                leaderboard.sort((a, b) => b.score - a.score);
-                leaderboard.splice(10);
-                localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
-                updateLeaderboard();
+            const optOut = confirm('Would you like to add your name to the leaderboard? (Press SPACE to opt out)');
+
+            if (!optOut) {
+                const playerName = prompt('Enter your name:');
+                if (playerName) {
+                    leaderboard.push({ name: playerName, score });
+                    leaderboard.sort((a, b) => b.score - a.score);
+                    leaderboard.splice(10);
+                    localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+                    updateLeaderboard();
+                }
             }
             resetGame();
         }
